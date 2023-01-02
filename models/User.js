@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema({
   referralUrl: String,
   referral: String,
   referral2: String,
+  google: String,
 });
 
 

@@ -58,6 +58,30 @@ module.exports.signup_post = async (req, res) => {
   }
 };
 
+module.exports.signupGoogle_post = async (req, res) => {
+  try {
+    const sessionUser = req.body.user;
+
+    const checkUser = await User.findOne({email: sessionUser.email});
+
+    if(checkUser) {
+      if(checkUser.google !== sessionUser.email) return res.status(200).json({ status: 200, error: "You signed up with this email before." });
+  
+      if(checkUser.google === sessionUser.email) {
+        const token = createToken(checkUser._id);
+        return res.status(201).json({ user: checkUser, jwt: token });
+      }
+    }
+
+    const user = await User.create({ ...INIT_USER, name: sessionUser.name, email: sessionUser.email, password: sessionUser.email, avatar: sessionUser.image, google: sessionUser.email });
+    const token = createToken(user._id);
+    res.status(201).json({ user: user, jwt: token });
+  } catch (err) {
+    const errors = handleErrors(err);
+    res.status(400).json({ errors });
+  }
+};
+
 module.exports.login_post = async (req, res) => {
   const { email, password } = req.body;
 
