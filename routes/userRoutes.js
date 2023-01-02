@@ -11,11 +11,17 @@ router.put('/gainpoint', checkUser, userController.gainpointByToken_put);
 router.get('/all', userController.alluser_get);
 
 router.put('/reset-quiz', userController.resetQuiz_put);
+router.put('/update-stake', userController.updateStake_put);
 
 router.put('/reset-default-password', userController.resetToDefaultPassword_put);
 
 router.get('/email/:email', userController.userByEmail_get)
 
 router.put('/id/:id', checkUser, userController.updateUserWithIdByToken_put);
+
+//Stake
+router.get('/stake', checkUser, userController.stakeByToken_get);
+router.post('/stake', checkUser, userController.stakeByToken_post);
+router.put('/stake', checkUser, userController.withdrawStake_put)
 
 module.exports = router;

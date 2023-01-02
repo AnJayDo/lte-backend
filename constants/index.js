@@ -12,4 +12,6 @@ const INIT_USER = {
 
 const GAIN_POINT = 10;
 
-module.exports = { INIT_USER, GAIN_POINT };
+const APY_DAY = 1.06108;
+
+module.exports = { INIT_USER, GAIN_POINT, APY_DAY };

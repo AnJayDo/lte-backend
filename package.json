@@ -13,7 +13,9 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.23",
+    "node-schedule": "^2.1.0",
     "nodemon": "^2.0.20",
+    "request": "^2.88.2",
     "validator": "^13.1.1"
   },
   "scripts": {

@@ -1,8 +1,9 @@
 const bcrypt = require('bcrypt');
 
-const { GAIN_POINT } = require('../constants');
+const { GAIN_POINT, APY_DAY } = require('../constants');
 
 const QuizReward = require('../models/QuizReward');
+const Stake = require('../models/Stake');
 const User = require('../models/User');
 
 const userByEmail_get = async (req, res) => {
@@ -115,6 +116,84 @@ const gainpointByToken_put = async (req, res) => {
   }
 };
 
+const stakeByToken_get = async (req, res) => {
+  try {
+    if (!req.user)
+      return res.status(401).json({ error: 'User does not exists...!' });
+
+    const { _id: id } = req.user;
+
+    const stake = await Stake.findOne({userId: id, status: 'open'});
+
+    res.status(201).json({ status: true, stake });
+  } catch (error) {
+    res.status(500).json({ message: 'Cannot get user.' });
+  }
+}
+
+const stakeByToken_post = async (req, res) => {
+  try {
+    if (!req.user)
+      return res.status(401).json({ error: 'User does not exists...!' });
+
+    const { _id: id } = req.user;
+
+    const stake = await Stake.findOne({userId: id, status: 'open'});
+
+    if(stake) {
+      const result = await Stake.findByIdAndUpdate(stake._id, {
+        initAmount: stake.initAmount + req.body.quantity,
+        amount: stake.amount + req.body.quantity,
+        updatedDate: new Date()
+      }, {new: true})
+      if(!result) return res.status(500).json({ error: 'Cannot stake more' });
+      const user = await User.findByIdAndUpdate(id, {
+        point: req.user.point - req.body.quantity
+      }, {new: true})
+      return res.status(201).json({ status: true, user, stake: result });
+    }
+
+    const result = await Stake.create({
+      initAmount: req.body.quantity,
+      amount: req.body.quantity,
+      userId: id,
+    })
+    if(!result) return res.status(500).json({ error: 'Cannot stake more' });
+    const user = await User.findByIdAndUpdate(id, {
+      point: req.user.point - req.body.quantity
+    }, {new: true})
+
+    res.status(201).json({ status: true, stake: result, user });
+  } catch (error) {
+    res.status(500).json({ message: 'Cannot get user.' });
+  }
+}
+
+const withdrawStake_put = async (req, res) => {
+  try {
+    if (!req.user)
+      return res.status(401).json({ error: 'User does not exists...!' });
+
+    const { _id: id } = req.user;
+
+    const stake = await Stake.findOne({userId: id, status: 'open'});
+
+    if(stake) {
+      const result = await Stake.findByIdAndUpdate(stake._id, {
+        status: 'closed',
+        updatedDate: new Date()
+      }, {new: true})
+      if(!result) return res.status(500).json({ error: 'Cannot stake more' });
+      const user = await User.findByIdAndUpdate(id, {
+        point: req.user.point + stake.amount
+      }, {new: true})
+      return res.status(201).json({ status: true, user, stake: result });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Cannot get user.' });
+  }
+}
+
 const updateUserWithIdByToken_put = async (req, res) => {
   try {
     if (!req.user)
@@ -143,6 +222,30 @@ const updateUserWithIdByToken_put = async (req, res) => {
   }
 };
 
+
+const updateStake_put = async (req, res) => {
+  if (!req.query || req.query.role !== 'sysadmin')
+    res.status(200).json({ status: 200, message: 'Failed' });
+  const stakes = await Stake.find({ status: 'open' });
+
+  stakes.forEach(stake => {
+    // if(stake.updatedDate.getTime() - (new Date()).getTime() >= 86400000) {
+      stake.amount = stake.amount*APY_DAY;
+      stake.save();
+    // }
+  })
+
+  const result = await Stake.find({ status: 'open' });
+
+  res
+    .status(200)
+    .json({
+      status: 200,
+      message: 'Get all stakes successfully.',
+      result,
+    });
+};
+
 module.exports = {
   alluser_get,
   resetQuiz_put,
@@ -151,4 +254,8 @@ module.exports = {
   me_get,
   gainpointByToken_put,
   updateUserWithIdByToken_put,
+  stakeByToken_get,
+  stakeByToken_post,
+  withdrawStake_put,
+  updateStake_put
 };
