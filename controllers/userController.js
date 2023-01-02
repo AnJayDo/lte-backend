@@ -115,6 +115,34 @@ const gainpointByToken_put = async (req, res) => {
   }
 };
 
+const updateUserWithIdByToken_put = async (req, res) => {
+  try {
+    if (!req.user)
+      return res.status(401).json({ message: 'User does not exists...!' });
+
+    const { id } = req.params;
+
+    // check duplicate users
+    const user = await User.findById(id);
+    if (!user)
+      return res.status(422).json({ message: 'User does not exists...!' });
+
+    const result = await User.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true }
+    );
+    if (!result)
+      return res
+        .status(422)
+        .json({ message: 'Cannot update the exist user...!' });
+
+    res.status(201).json({ status: true, user: result });
+  } catch (error) {
+    res.status(500).json({ message: 'Cannot get user.' });
+  }
+};
+
 module.exports = {
   alluser_get,
   resetQuiz_put,
@@ -122,4 +150,5 @@ module.exports = {
   userByEmail_get,
   me_get,
   gainpointByToken_put,
+  updateUserWithIdByToken_put,
 };

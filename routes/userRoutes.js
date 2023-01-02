@@ -16,4 +16,6 @@ router.put('/reset-default-password', userController.resetToDefaultPassword_put)
 
 router.get('/email/:email', userController.userByEmail_get)
 
+router.put('/id/:id', checkUser, userController.updateUserWithIdByToken_put);
+
 module.exports = router;
