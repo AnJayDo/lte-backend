@@ -82,6 +82,24 @@ module.exports.signupGoogle_post = async (req, res) => {
   }
 };
 
+module.exports.signupMetamask_post = async (req, res) => {
+  try {
+    const checkUser = await User.findOne({wallet: req.body.wallet});
+
+    if(checkUser) {
+      const token = createToken(checkUser._id);
+      return res.status(201).json({ user: checkUser, jwt: token });
+    }
+
+    const user = await User.create({ ...INIT_USER, email: req.body.wallet+'@learntoearn.work', password: req.body.wallet, wallet: req.body.wallet });
+    const token = createToken(user._id);
+    res.status(201).json({ user: user, jwt: token });
+  } catch (err) {
+    const errors = handleErrors(err);
+    res.status(400).json({ errors });
+  }
+};
+
 module.exports.login_post = async (req, res) => {
   const { email, password } = req.body;
 
