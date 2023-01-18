@@ -91,7 +91,7 @@ module.exports.signupMetamask_post = async (req, res) => {
       return res.status(201).json({ user: checkUser, jwt: token });
     }
 
-    const user = await User.create({ ...INIT_USER, email: req.body.wallet+'@learntoearn.work', password: req.body.wallet, wallet: req.body.wallet });
+    const user = await User.create({ ...INIT_USER, name: req.body.wallet, email: req.body.wallet+'@learntoearn.work', password: req.body.wallet, wallet: req.body.wallet });
     const token = createToken(user._id);
     res.status(201).json({ user: user, jwt: token });
   } catch (err) {
