@@ -25,11 +25,11 @@ const handleErrors = (err) => {
 
   // validation errors
   if (err.message.includes('user validation failed')) {
+    if(err.message.includes('referral')) return;
     // console.log(err);
     Object.values(err.errors).forEach(({ properties }) => {
       // console.log(val);
       // console.log(properties);
-      if(properties.path.includes('ref')) return;
       errors[properties.path] = properties.message;
     });
   }
@@ -96,6 +96,7 @@ module.exports.signupMetamask_post = async (req, res) => {
     const token = createToken(user._id);
     res.status(201).json({ user: user, jwt: token });
   } catch (err) {
+    const errors = handleErrors(err);
     res.status(400).json({ errors });
   }
 };
