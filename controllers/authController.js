@@ -25,13 +25,14 @@ const handleErrors = (err) => {
 
   // validation errors
   if (err.message.includes('user validation failed')) {
-    if(err.message.includes('referral')) return;
-    // console.log(err);
-    Object.values(err.errors).forEach(({ properties }) => {
-      // console.log(val);
-      // console.log(properties);
-      errors[properties.path] = properties.message;
-    });
+    if(!err.message.includes('referral')) {
+      // console.log(err);
+      Object.values(err.errors).forEach(({ properties }) => {
+        // console.log(val);
+        // console.log(properties);
+        errors[properties.path] = properties.message;
+      });
+    }
   }
 
   return errors;

@@ -7,8 +7,8 @@ const INIT_USER = {
   google: '',
   todayQuiz: false,
   referralUrl: '',
-  referral: '',
-  referral2: '',
+  referral: null,
+  referral2: null,
 };
 
 const GAIN_POINT = 10;

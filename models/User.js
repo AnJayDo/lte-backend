@@ -21,8 +21,8 @@ const userSchema = new mongoose.Schema({
   point: Number,
   todayQuiz: Boolean,
   referralUrl: String,
-  referral: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  referral2: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  referral: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  referral2: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   google: String,
 });
 
