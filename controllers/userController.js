@@ -82,7 +82,26 @@ const generateReferral_put = async (req, res) => {
       .json({ status: 200, message: 'Generate referral successfully.', referral: result });
   } catch (error) {
     console.log(error)
-    res.status(500).json({ message: 'Cannot get user.' });
+    console.log("Regenerating")
+    try {
+      const shortCode = short.generate();
+      const result = await Referral.findOneAndUpdate({
+        user: req.user._id},{
+        shortUrl: shortCode
+      });
+      let id = req.user._id;
+      const user = await User.findByIdAndUpdate(id, {
+        referralUrl: result.shortUrl
+      }, {new: true});
+      console.log('Regenerate Referral: ', user._id, '- to: ', user.referralUrl)
+
+      res
+        .status(201)
+        .json({ status: 200, message: 'Generate referral successfully.', referral: result });
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Cannot get user.' });
+    }
   }
 };
 
