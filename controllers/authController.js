@@ -96,7 +96,6 @@ module.exports.signupMetamask_post = async (req, res) => {
     const token = createToken(user._id);
     res.status(201).json({ user: user, jwt: token });
   } catch (err) {
-    const errors = handleErrors(err);
     res.status(400).json({ errors });
   }
 };
