@@ -29,6 +29,7 @@ const handleErrors = (err) => {
     Object.values(err.errors).forEach(({ properties }) => {
       // console.log(val);
       // console.log(properties);
+      if(properties.path.includes('ref')) return;
       errors[properties.path] = properties.message;
     });
   }

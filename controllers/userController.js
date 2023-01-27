@@ -58,6 +58,7 @@ const generateReferral_put = async (req, res) => {
     } while (!!compareObject && shortCode === compareObject?.shortUrl)
     let result;
     if(!req.user.referralUrl) {
+      console.log("Generating")
       result = await Referral.create({
         shortUrl: shortCode,
         user: req.user._id
@@ -80,6 +81,7 @@ const generateReferral_put = async (req, res) => {
       .status(201)
       .json({ status: 200, message: 'Generate referral successfully.', referral: result });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: 'Cannot get user.' });
   }
 };
