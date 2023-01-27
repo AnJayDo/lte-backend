@@ -45,7 +45,7 @@ app.set('view engine', 'ejs');
 const dbURI = process.env.MONGO_URL;
 const port = process.env.PORT || 9000;
 
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true, useFindAndModify: false })
   .then((result) => {
     console.log("DB connected.");
     console.log("App running on port:", port);

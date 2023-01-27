@@ -1,6 +1,7 @@
 const INIT_USER = {
   email: '',
   name: '',
+  avatar: '',
   point: 0,
   wallet: '',
   google: '',

@@ -24,4 +24,7 @@ router.get('/stake', checkUser, userController.stakeByToken_get);
 router.post('/stake', checkUser, userController.stakeByToken_post);
 router.put('/stake', checkUser, userController.withdrawStake_put)
 
+//Referral
+router.put('/referral', checkUser, userController.generateReferral_put)
+
 module.exports = router;

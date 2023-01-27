@@ -1,10 +1,14 @@
 const bcrypt = require('bcrypt');
+const e = require('express');
+const short = require('short-uuid');
 
 const { GAIN_POINT, APY_DAY } = require('../constants');
 
 const QuizReward = require('../models/QuizReward');
+const Referral = require('../models/Referral');
 const Stake = require('../models/Stake');
 const User = require('../models/User');
+const transactionUtil = require('../utilities/transaction');
 
 const userByEmail_get = async (req, res) => {
   try {
@@ -36,6 +40,45 @@ const me_get = async (req, res) => {
     res
       .status(201)
       .json({ status: 200, message: 'Get user successfully.', user: req.user });
+  } catch (error) {
+    res.status(500).json({ message: 'Cannot get user.' });
+  }
+};
+
+const generateReferral_put = async (req, res) => {
+  try {
+    if (!req.user)
+      return res.status(422).json({ message: 'User does not exists...!' });
+
+    let shortCode;
+    let compareObject;
+    do {
+      shortCode = short.generate();
+      compareObject = await Referral.findOne({shortUrl: shortCode});
+    } while (!!compareObject && shortCode === compareObject?.shortUrl)
+    let result;
+    if(!req.user.referralUrl) {
+      result = await Referral.create({
+        shortUrl: shortCode,
+        user: req.user._id
+      });
+    }
+    else {
+      console.log("Regenerating")
+      result = await Referral.findOneAndUpdate({
+        user: req.user._id},{
+        shortUrl: shortCode
+      });
+      let id = req.user._id;
+      const user = await User.findByIdAndUpdate(id, {
+        referralUrl: result.shortUrl
+      }, {new: true});
+      console.log('Regenerate Referral: ', user._id, '- to: ', user.referralUrl)
+    }
+
+    res
+      .status(201)
+      .json({ status: 200, message: 'Generate referral successfully.', referral: result });
   } catch (error) {
     res.status(500).json({ message: 'Cannot get user.' });
   }
@@ -149,8 +192,9 @@ const stakeByToken_post = async (req, res) => {
       if(!result) return res.status(500).json({ error: 'Cannot stake more' });
       const user = await User.findByIdAndUpdate(id, {
         point: req.user.point - req.body.quantity
-      }, {new: true})
-      return res.status(201).json({ status: true, user, stake: result });
+      }, {new: true});
+      const transaction = await transactionUtil.create('Stake',req.body.quantity,'Stake LEARN token',null,user._id);
+      return res.status(201).json({ status: true, user, stake: result, transaction });
     }
 
     const result = await Stake.create({
@@ -162,8 +206,8 @@ const stakeByToken_post = async (req, res) => {
     const user = await User.findByIdAndUpdate(id, {
       point: req.user.point - req.body.quantity
     }, {new: true})
-
-    res.status(201).json({ status: true, stake: result, user });
+    const transaction = await transactionUtil.create('Stake',req.body.quantity,'Stake LEARN token',null,user._id);
+    res.status(201).json({ status: true, user, stake: result, transaction });
   } catch (error) {
     res.status(500).json({ message: 'Cannot get user.' });
   }
@@ -187,6 +231,10 @@ const withdrawStake_put = async (req, res) => {
       const user = await User.findByIdAndUpdate(id, {
         point: req.user.point + stake.amount
       }, {new: true})
+      const transaction = await transactionUtil.create('Withdraw',req.body.quantity,'Withdraw LEARN token',user._id,null);
+      if(user.referral) {
+        transactionUtil.generateReferral(user, stake.amount);
+      }
       return res.status(201).json({ status: true, user, stake: result });
     }
   } catch (error) {
@@ -257,5 +305,6 @@ module.exports = {
   stakeByToken_get,
   stakeByToken_post,
   withdrawStake_put,
-  updateStake_put
+  updateStake_put,
+  generateReferral_put
 };
