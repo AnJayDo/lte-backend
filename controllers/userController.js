@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const e = require('express');
 const short = require('short-uuid');
 
-const { GAIN_POINT, APY_DAY } = require('../constants');
+const { GAIN_POINT, APY_5_MINUTES } = require('../constants');
 
 const QuizReward = require('../models/QuizReward');
 const Referral = require('../models/Referral');
@@ -299,7 +299,7 @@ const updateStake_put = async (req, res) => {
 
   stakes.forEach(stake => {
     // if(stake.updatedDate.getTime() - (new Date()).getTime() >= 86400000) {
-      stake.amount = stake.amount*APY_DAY;
+      stake.amount = stake.amount*APY_5_MINUTES;
       stake.save();
     // }
   })

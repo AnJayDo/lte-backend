@@ -13,6 +13,10 @@ const INIT_USER = {
 
 const GAIN_POINT = 10;
 
+const APY_YEAR = 3;
+
 const APY_DAY = 1.06108;
+
+const APY_5_MINUTES = 0.0000057;
 
 module.exports = { INIT_USER, GAIN_POINT, APY_DAY };

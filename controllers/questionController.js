@@ -23,23 +23,33 @@ function shuffle(array) {
 module.exports = async (req, res) => {
   const questions = QuestionList.split('/ ')
     .slice(1)
-    .map((question) => {
+    .map((question, ind) => {
       const list = question.split('\n');
+      let answers =
+        ind < 51
+          ? list
+              .slice(1)
+              .filter((item) => !!item.trim().length)
+              .map((item, index) => {
+                let result = item.trim();
+                return result;
+              })
+              .slice(0, -1)
+          : list
+              .slice(1)
+              .filter((item) => !!item.trim().length)
+              .map((item, index) => {
+                let result = item.trim();
+                return result;
+              });
       return {
         correct: Number(list[0][list[0].length - 1]),
         title: list[0].slice(0, list[0].length - 1),
-        answers: list
-          .slice(1)
-          .filter((item) => !!item.trim().length)
-          .map((item, index) => {
-            let result = item.trim();
-            return result;
-          })
-          .slice(0, 4),
+        answers,
       };
     });
   shuffle(questions);
   shuffle(questions);
 
-  res.status(200).json({ questions: questions.slice(0, 10) });
-}
+  res.status(200).json({ questions: questions.slice(0, 50) });
+};

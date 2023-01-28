@@ -141,8 +141,8 @@ Mining
 2040
 2140
 2400
-28/ Which of the following electronic devices do you need to mine Bitcoin?0
 
+28/ Which of the following electronic devices do you need to mine Bitcoin?0
 A graphics processing unit
 A random-access memory
 A central processing unit
@@ -212,6 +212,7 @@ Corruption
 The United States
 China
 India
+
 40/ What do you need to access a Bitcoin wallet address?2
 A password
 An encoded line of code
@@ -266,6 +267,7 @@ Futurism
 Sanssouci Palace
 Potala Palace
 Catherine Palace
+
 50/ What is the most common nickname for the Eiffel Tower in Paris, France?1
 The shard
 The iron lady
