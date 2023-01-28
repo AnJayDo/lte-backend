@@ -19,4 +19,4 @@ const APY_DAY = 1.06108;
 
 const APY_5_MINUTES = 0.0000057;
 
-module.exports = { INIT_USER, GAIN_POINT, APY_DAY };
+module.exports = { INIT_USER, GAIN_POINT, APY_DAY, APY_5_MINUTES };

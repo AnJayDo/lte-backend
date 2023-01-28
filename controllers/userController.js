@@ -296,10 +296,9 @@ const updateStake_put = async (req, res) => {
   if (!req.query || req.query.role !== 'sysadmin')
     res.status(200).json({ status: 200, message: 'Failed' });
   const stakes = await Stake.find({ status: 'open' });
-
   stakes.forEach(stake => {
     // if(stake.updatedDate.getTime() - (new Date()).getTime() >= 86400000) {
-      stake.amount = stake.amount*APY_5_MINUTES;
+      stake.amount = stake.amount*(1.00 + APY_5_MINUTES);
       stake.save();
     // }
   })
