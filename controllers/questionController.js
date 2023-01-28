@@ -51,5 +51,5 @@ module.exports = async (req, res) => {
   shuffle(questions);
   shuffle(questions);
 
-  res.status(200).json({ questions: questions.slice(0, 50) });
+  res.status(200).json({ questions: questions.slice(0, 10) });
 };
