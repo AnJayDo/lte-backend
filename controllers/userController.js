@@ -298,7 +298,7 @@ const updateStake_put = async (req, res) => {
   const stakes = await Stake.find({ status: 'open' });
   stakes.forEach(stake => {
     // if(stake.updatedDate.getTime() - (new Date()).getTime() >= 86400000) {
-      stake.amount = stake.amount*(1.00 + APY_5_MINUTES);
+      stake.amount = stake.amount*(APY_5_MINUTES);
       stake.save();
     // }
   })
