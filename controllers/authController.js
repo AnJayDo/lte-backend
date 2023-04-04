@@ -97,7 +97,7 @@ module.exports.signupMetamask_post = async (req, res) => {
 
     if(req.body.referral) {
       newUser.referral = req.body.refferal;
-      const refUser = await User.findById(req.body.referral);
+      const refUser = await User.findOne({referralUrl: req.body.referral});
       if(refUser.referral) newUser.referral2 = refUser.referral;
     }
 
