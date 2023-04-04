@@ -21,37 +21,37 @@ const createTransaction = async function (
 
 const generateReferralForUser = async function (user, reward) {
   if (user.referral) {
-    const user = await User.findByIdAndUpdate(
+    const refUser = await User.findByIdAndUpdate(
       user.referral,
       {
         point: req.user.point + reward * 0.1,
       },
       { new: true }
     );
-    if (user) {
+    if (refUser) {
       createTransaction(
         'Referral Reward',
         reward * 0.1,
         'Referral Reward',
-        user._id,
+        refUser._id,
         null
       );
     }
   }
-  if (user.referral2) {
-    const user = await User.findByIdAndUpdate(
-      user.referral2,
+  if (refUser.referral2) {
+    const refUser2 = await User.findByIdAndUpdate(
+      refUser.referral2,
       {
         point: req.user.point + reward * 0.05,
       },
       { new: true }
     );
-    if (user) {
+    if (refUser2) {
       createTransaction(
         'Referral Reward',
         reward * 0.1,
         'Referral Reward',
-        user._id,
+        refUser2._id,
         null
       );
     }

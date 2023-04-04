@@ -7,6 +7,7 @@ const { GAIN_POINT, APY_5_MINUTES } = require('../constants');
 const QuizReward = require('../models/QuizReward');
 const Referral = require('../models/Referral');
 const Stake = require('../models/Stake');
+const Transaction = require('../models/Transaction');
 const User = require('../models/User');
 const transactionUtil = require('../utilities/transaction');
 
@@ -40,6 +41,21 @@ const me_get = async (req, res) => {
     res
       .status(201)
       .json({ status: 200, message: 'Get user successfully.', user: req.user });
+  } catch (error) {
+    res.status(500).json({ message: 'Cannot get user.' });
+  }
+};
+
+const transactions_get = async (req, res) => {
+  try {
+    if (!req.user)
+      return res.status(422).json({ message: 'User does not exists...!' });
+
+    const transactions = await Transaction.find({$or:[{toUser: req.user._id},{fromUser: req.user._id}]})
+
+    res
+      .status(201)
+      .json({ status: 200, message: 'Get logged in user transactions successfully.', transactions });
   } catch (error) {
     res.status(500).json({ message: 'Cannot get user.' });
   }
@@ -320,6 +336,7 @@ module.exports = {
   resetToDefaultPassword_put,
   userByEmail_get,
   me_get,
+  transactions_get,
   gainpointByToken_put,
   updateUserWithIdByToken_put,
   stakeByToken_get,

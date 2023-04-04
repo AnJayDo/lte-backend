@@ -6,6 +6,8 @@ const router = Router();
 
 router.get('/me', checkUser, userController.me_get);
 
+router.get('/transactions', checkUser, userController.transactions_get);
+
 router.put('/gainpoint', checkUser, userController.gainpointByToken_put);
 
 router.get('/all', userController.alluser_get);
