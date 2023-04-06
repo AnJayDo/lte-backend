@@ -35,8 +35,12 @@ const updateStake = () => {
   });
 };
 
-const job = schedule.scheduleJob('*/5 * * * *', function () {
+const jobUpdateStake = schedule.scheduleJob('*/5 * * * *', function () {
   console.log('Reset Quiz every 5 minutes: ', (new Date()).toTimeString());
-  resetQuiz();
   updateStake();
+});
+
+const jobResetQuiz = schedule.scheduleJob('0 0 * * *', function () {
+  console.log('Reset Quiz everyday at 0:00 : ', (new Date()).toTimeString());
+  resetQuiz();
 });
