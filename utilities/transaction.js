@@ -25,18 +25,19 @@ const generateReferralForUser = async function (user, reward) {
     const refUserUpdated = await User.findByIdAndUpdate(
       user.referral,
       {
-        point: refUser.point + reward * 0.1,
+        point: refUser.point + reward * parseFloat(process.env.REF_LEVEL_ONE),
       },
       { new: true }
     );
     if (refUser) {
       createTransaction(
         'Referral Reward',
-        reward * 0.1,
+        reward * parseFloat(process.env.REF_LEVEL_ONE),
         'Referral Reward',
         refUser._id,
         null
       );
+      console.log('Generated Ref Lv.1 for: ', refUserUpdated._id)
     }
   }
   if (user.referral2) {
@@ -44,18 +45,19 @@ const generateReferralForUser = async function (user, reward) {
     const refUser2Updated = await User.findByIdAndUpdate(
       user.referral2,
       {
-        point: refUser2.point + reward * 0.05,
+        point: refUser2.point + reward * parseFloat(process.env.REF_LEVEL_TWO),
       },
       { new: true }
     );
     if (refUser2) {
       createTransaction(
         'Referral Reward',
-        reward * 0.05,
+        reward * parseFloat(process.env.REF_LEVEL_TWO),
         'Referral Reward',
         refUser2._id,
         null
       );
+      console.log('Generated Ref Lv.2 for: ', refUser2Updated._id)
     }
   }
 };
