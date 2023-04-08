@@ -86,7 +86,7 @@ module.exports.signupGoogle_post = async (req, res) => {
 
 module.exports.signupMetamask_post = async (req, res) => {
   try {
-    const checkUser = await User.findOne({wallet: req.body.wallet});
+    let checkUser = await User.findOne({wallet: req.body.wallet});
 
     if(checkUser) {
       const token = createToken(checkUser._id);
@@ -101,11 +101,20 @@ module.exports.signupMetamask_post = async (req, res) => {
       if(refUser.referral) newUser.referral2 = refUser.referral;
     }
 
+    if()
+
     const user = await User.create(newUser);
     const token = createToken(user._id);
     res.status(201).json({ user: user, jwt: token });
   } catch (err) {
     const errors = handleErrors(err);
+    if(errors.email.includes('dup')) {
+      let checkUser = await User.findOne({wallet: req.body.wallet});
+      if(checkUser) {
+        const token = createToken(checkUser._id);
+        return res.status(201).json({ user: checkUser, jwt: token });
+      }
+    }
     res.status(400).json({ errors });
   }
 };
