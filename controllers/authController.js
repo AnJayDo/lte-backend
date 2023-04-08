@@ -101,8 +101,6 @@ module.exports.signupMetamask_post = async (req, res) => {
       if(refUser.referral) newUser.referral2 = refUser.referral;
     }
 
-    if()
-
     const user = await User.create(newUser);
     const token = createToken(user._id);
     res.status(201).json({ user: user, jwt: token });
