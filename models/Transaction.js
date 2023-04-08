@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User = require('./User')
 
 const transactionSchema = new mongoose.Schema({
   name: {type: String, default: ''},
@@ -6,8 +7,8 @@ const transactionSchema = new mongoose.Schema({
   description: {type: String, default: ''},
   status: { type: String, default: 'open'},
   createdDate: { type: Date, default: Date.now },
-  toUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  fromUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  toUser: { type: mongoose.Schema.Types.ObjectId, ref: User },
+  fromUser: { type: mongoose.Schema.Types.ObjectId, ref: User },
 });
 
 

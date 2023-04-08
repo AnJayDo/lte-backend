@@ -51,13 +51,20 @@ const transactions_get = async (req, res) => {
     if (!req.user)
       return res.status(422).json({ message: 'User does not exists...!' });
 
-    const transactions = await Transaction.find({$or:[{toUser: req.user._id},{fromUser: req.user._id}]})
+    const transactions = await Transaction.find({
+      $or: [{ toUser: req.user._id }, { fromUser: req.user._id }],
+    }).populate(['toUser', 'fromUser']);
 
     res
       .status(201)
-      .json({ status: 200, message: 'Get logged in user transactions successfully.', transactions });
+      .json({
+        status: 200,
+        message: 'Get logged in user transactions successfully.',
+        transactions,
+      });
   } catch (error) {
-    res.status(500).json({ message: 'Cannot get user.' });
+    console.log(error)
+    res.status(500).json({ message: 'Cannot get transactions.' });
   }
 };
 
@@ -70,52 +77,85 @@ const generateReferral_put = async (req, res) => {
     let compareObject;
     do {
       shortCode = short.generate();
-      compareObject = await Referral.findOne({shortUrl: shortCode});
-    } while (!!compareObject && shortCode === compareObject?.shortUrl)
+      compareObject = await Referral.findOne({ shortUrl: shortCode });
+    } while (!!compareObject && shortCode === compareObject?.shortUrl);
     let result;
-    if(!req.user.referralUrl) {
-      console.log("Generating")
+    if (!req.user.referralUrl) {
+      console.log('Generating');
       result = await Referral.create({
         shortUrl: shortCode,
-        user: req.user._id
+        user: req.user._id,
       });
-    }
-    else {
-      console.log("Regenerating")
-      result = await Referral.findOneAndUpdate({
-        user: req.user._id},{
-        shortUrl: shortCode
-      });
+    } else {
+      console.log('Regenerating');
+      result = await Referral.findOneAndUpdate(
+        {
+          user: req.user._id,
+        },
+        {
+          shortUrl: shortCode,
+        }
+      );
       let id = req.user._id;
-      const user = await User.findByIdAndUpdate(id, {
-        referralUrl: result.shortUrl
-      }, {new: true});
-      console.log('Regenerate Referral: ', user._id, '- to: ', user.referralUrl)
+      const user = await User.findByIdAndUpdate(
+        id,
+        {
+          referralUrl: result.shortUrl,
+        },
+        { new: true }
+      );
+      console.log(
+        'Regenerate Referral: ',
+        user._id,
+        '- to: ',
+        user.referralUrl
+      );
     }
 
     res
       .status(201)
-      .json({ status: 200, message: 'Generate referral successfully.', referral: result });
+      .json({
+        status: 200,
+        message: 'Generate referral successfully.',
+        referral: result,
+      });
   } catch (error) {
-    console.log(error)
-    console.log("Regenerating")
+    console.log(error);
+    console.log('Regenerating');
     try {
       const shortCode = short.generate();
-      const result = await Referral.findOneAndUpdate({
-        user: req.user._id},{
-        shortUrl: shortCode
-      });
+      const result = await Referral.findOneAndUpdate(
+        {
+          user: req.user._id,
+        },
+        {
+          shortUrl: shortCode,
+        }
+      );
       let id = req.user._id;
-      const user = await User.findByIdAndUpdate(id, {
-        referralUrl: result.shortUrl
-      }, {new: true});
-      console.log('Regenerate Referral: ', user._id, '- to: ', user.referralUrl)
+      const user = await User.findByIdAndUpdate(
+        id,
+        {
+          referralUrl: result.shortUrl,
+        },
+        { new: true }
+      );
+      console.log(
+        'Regenerate Referral: ',
+        user._id,
+        '- to: ',
+        user.referralUrl
+      );
 
       res
         .status(201)
-        .json({ status: 200, message: 'Generate referral successfully.', referral: result });
+        .json({
+          status: 200,
+          message: 'Generate referral successfully.',
+          referral: result,
+        });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       res.status(500).json({ message: 'Cannot get user.' });
     }
   }
@@ -133,14 +173,12 @@ const resetQuiz_put = async (req, res) => {
     res.status(200).json({ status: 200, message: 'Failed' });
   const result = await User.updateMany(null, { todayQuiz: false });
   const users = await User.find();
-  res
-    .status(200)
-    .json({
-      status: 200,
-      message: 'Get all user successfully.',
-      result,
-      users,
-    });
+  res.status(200).json({
+    status: 200,
+    message: 'Get all user successfully.',
+    result,
+    users,
+  });
 };
 
 const resetToDefaultPassword_put = async (req, res) => {
@@ -203,13 +241,13 @@ const stakeByToken_get = async (req, res) => {
 
     const { _id: id } = req.user;
 
-    const stake = await Stake.findOne({userId: id, status: 'open'});
+    const stake = await Stake.findOne({ userId: id, status: 'open' });
 
     res.status(201).json({ status: true, stake });
   } catch (error) {
     res.status(500).json({ message: 'Cannot get user.' });
   }
-}
+};
 
 const stakeByToken_post = async (req, res) => {
   try {
@@ -218,37 +256,63 @@ const stakeByToken_post = async (req, res) => {
 
     const { _id: id } = req.user;
 
-    const stake = await Stake.findOne({userId: id, status: 'open'});
+    const stake = await Stake.findOne({ userId: id, status: 'open' });
 
-    if(stake) {
-      const result = await Stake.findByIdAndUpdate(stake._id, {
-        initAmount: stake.initAmount + req.body.quantity,
-        amount: stake.amount + req.body.quantity,
-        updatedDate: new Date()
-      }, {new: true})
-      if(!result) return res.status(500).json({ error: 'Cannot stake more' });
-      const user = await User.findByIdAndUpdate(id, {
-        point: req.user.point - req.body.quantity
-      }, {new: true});
-      const transaction = await transactionUtil.create('Stake',req.body.quantity,'Stake LEARN token',null,user._id);
-      return res.status(201).json({ status: true, user, stake: result, transaction });
+    if (stake) {
+      const result = await Stake.findByIdAndUpdate(
+        stake._id,
+        {
+          initAmount: stake.initAmount + req.body.quantity,
+          amount: stake.amount + req.body.quantity,
+          updatedDate: new Date(),
+        },
+        { new: true }
+      );
+      if (!result) return res.status(500).json({ error: 'Cannot stake more' });
+      const user = await User.findByIdAndUpdate(
+        id,
+        {
+          point: req.user.point - req.body.quantity,
+        },
+        { new: true }
+      );
+      const transaction = await transactionUtil.create(
+        'Stake',
+        req.body.quantity,
+        'Stake LEARN token',
+        null,
+        user._id
+      );
+      return res
+        .status(201)
+        .json({ status: true, user, stake: result, transaction });
     }
 
     const result = await Stake.create({
       initAmount: req.body.quantity,
       amount: req.body.quantity,
       userId: id,
-    })
-    if(!result) return res.status(500).json({ error: 'Cannot stake more' });
-    const user = await User.findByIdAndUpdate(id, {
-      point: req.user.point - req.body.quantity
-    }, {new: true})
-    const transaction = await transactionUtil.create('Stake',req.body.quantity,'Stake LEARN token',null,user._id);
+    });
+    if (!result) return res.status(500).json({ error: 'Cannot stake more' });
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        point: req.user.point - req.body.quantity,
+      },
+      { new: true }
+    );
+    const transaction = await transactionUtil.create(
+      'Stake',
+      req.body.quantity,
+      'Stake LEARN token',
+      null,
+      user._id
+    );
     res.status(201).json({ status: true, user, stake: result, transaction });
   } catch (error) {
     res.status(500).json({ message: 'Cannot get user.' });
   }
-}
+};
 
 const withdrawStake_put = async (req, res) => {
   try {
@@ -257,19 +321,33 @@ const withdrawStake_put = async (req, res) => {
 
     const { _id: id } = req.user;
 
-    const stake = await Stake.findOne({userId: id, status: 'open'});
+    const stake = await Stake.findOne({ userId: id, status: 'open' });
 
-    if(stake) {
-      const result = await Stake.findByIdAndUpdate(stake._id, {
-        status: 'closed',
-        updatedDate: new Date()
-      }, {new: true})
-      if(!result) return res.status(500).json({ error: 'Cannot stake more' });
-      const user = await User.findByIdAndUpdate(id, {
-        point: req.user.point + stake.amount
-      }, {new: true})
-      const transaction = await transactionUtil.create('Withdraw',req.body.quantity,'Withdraw LEARN token',user._id,null);
-      if(user.referral) {
+    if (stake) {
+      const result = await Stake.findByIdAndUpdate(
+        stake._id,
+        {
+          status: 'closed',
+          updatedDate: new Date(),
+        },
+        { new: true }
+      );
+      if (!result) return res.status(500).json({ error: 'Cannot stake more' });
+      const user = await User.findByIdAndUpdate(
+        id,
+        {
+          point: req.user.point + stake.amount,
+        },
+        { new: true }
+      );
+      const transaction = await transactionUtil.create(
+        'Withdraw',
+        req.body.quantity,
+        'Withdraw LEARN token',
+        user._id,
+        null
+      );
+      if (user.referral) {
         transactionUtil.generateReferral(user, stake.amount);
       }
       return res.status(201).json({ status: true, user, stake: result });
@@ -277,7 +355,7 @@ const withdrawStake_put = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Cannot get user.' });
   }
-}
+};
 
 const updateUserWithIdByToken_put = async (req, res) => {
   try {
@@ -291,11 +369,7 @@ const updateUserWithIdByToken_put = async (req, res) => {
     if (!user)
       return res.status(422).json({ message: 'User does not exists...!' });
 
-    const result = await User.findByIdAndUpdate(
-      id,
-      req.body,
-      { new: true }
-    );
+    const result = await User.findByIdAndUpdate(id, req.body, { new: true });
     if (!result)
       return res
         .status(422)
@@ -307,27 +381,24 @@ const updateUserWithIdByToken_put = async (req, res) => {
   }
 };
 
-
 const updateStake_put = async (req, res) => {
   if (!req.query || req.query.role !== 'sysadmin')
     res.status(200).json({ status: 200, message: 'Failed' });
   const stakes = await Stake.find({ status: 'open' });
-  stakes.forEach(stake => {
+  stakes.forEach((stake) => {
     // if(stake.updatedDate.getTime() - (new Date()).getTime() >= 86400000) {
-      stake.amount = stake.amount*(APY_5_MINUTES);
-      stake.save();
+    stake.amount = stake.amount * APY_5_MINUTES;
+    stake.save();
     // }
-  })
+  });
 
   const result = await Stake.find({ status: 'open' });
 
-  res
-    .status(200)
-    .json({
-      status: 200,
-      message: 'Get all stakes successfully.',
-      result,
-    });
+  res.status(200).json({
+    status: 200,
+    message: 'Get all stakes successfully.',
+    result,
+  });
 };
 
 module.exports = {
@@ -343,5 +414,5 @@ module.exports = {
   stakeByToken_post,
   withdrawStake_put,
   updateStake_put,
-  generateReferral_put
+  generateReferral_put,
 };
