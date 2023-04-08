@@ -342,7 +342,7 @@ const withdrawStake_put = async (req, res) => {
       );
       const transaction = await transactionUtil.create(
         'Withdraw',
-        req.body.quantity,
+        result.amount,
         'Withdraw LEARN token',
         user._id,
         null
