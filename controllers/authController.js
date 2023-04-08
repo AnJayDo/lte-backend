@@ -106,7 +106,7 @@ module.exports.signupMetamask_post = async (req, res) => {
     res.status(201).json({ user: user, jwt: token });
   } catch (err) {
     const errors = handleErrors(err);
-    if(errors.email.includes('dup')) {
+    if(errors.email.includes('registered')) {
       let checkUser = await User.findOne({wallet: req.body.wallet});
       if(checkUser) {
         const token = createToken(checkUser._id);
