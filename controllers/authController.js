@@ -86,7 +86,12 @@ module.exports.signupGoogle_post = async (req, res) => {
 
 module.exports.signupMetamask_post = async (req, res) => {
   try {
-    let checkUser = await User.findOne({wallet: req.body.wallet});
+    let checkUser = await User.findOne(
+      {
+        $or: [{wallet: req.body.wallet}, {email: req.body.wallet+'@learntoearn.work'}],
+      }  
+      // {wallet: req.body.wallet}
+    );
 
     if(checkUser) {
       const token = createToken(checkUser._id);
