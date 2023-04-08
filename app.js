@@ -16,7 +16,7 @@ const { gainpoint_put } = require('./controllers/gainpointController');
 
 const app = express();
 
-const whitelist = [/localhost/g, /vercel.app/g , /learntoearn.work/g]
+const whitelist = [/localhost/g, /vercel.app/g , /learntoearn.work/g, /zklearn.io/g]
 const corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
