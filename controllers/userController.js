@@ -324,6 +324,9 @@ const withdrawStake_put = async (req, res) => {
     const stake = await Stake.findOne({ userId: id, status: 'open' });
 
     if (stake) {
+      if((new Date()).getTime()-(new Date(stake.createdDate)).getTime() < 86400000) {
+        return res.status(406).json({ status: 406, error: 'Cannot withdraw stake before tomorrow.' });
+      }
       const result = await Stake.findByIdAndUpdate(
         stake._id,
         {
