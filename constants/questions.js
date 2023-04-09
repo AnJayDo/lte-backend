@@ -47,7 +47,7 @@ module.exports.ZKQuestionList = [
     {
         title: 'What wallets are supported to use zksync?',
         answers: ['MetaMask', 'Hardware wallets', 'All wallets are supported'],
-        correct: 0
+        correct: 2
     },
 ]
 
