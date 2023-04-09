@@ -1,4 +1,4 @@
-const { QuestionList } = require('../constants/questions');
+const { QuestionList, ZKQuestionList } = require('../constants/questions');
 
 function shuffle(array) {
   let currentIndex = array.length,
@@ -21,6 +21,7 @@ function shuffle(array) {
 }
 
 module.exports = async (req, res) => {
+  /*
   const questions = QuestionList.split('/ ')
     .slice(1)
     .map((question, ind) => {
@@ -48,6 +49,8 @@ module.exports = async (req, res) => {
         answers,
       };
     });
+    */
+  const questions = ZKQuestionList;
   shuffle(questions);
   shuffle(questions);
 

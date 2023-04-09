@@ -88,7 +88,7 @@ module.exports.signupMetamask_post = async (req, res) => {
   try {
     let checkUser = await User.findOne(
       {
-        $or: [{wallet: req.body.wallet}, {email: req.body.wallet+'@learntoearn.work'}],
+        $or: [{wallet: req.body.wallet}, {email: req.body.wallet+'@learntoearn.work'}, {email: req.body.wallet+'@zklearn.io'}],
       }  
       // {wallet: req.body.wallet}
     );
@@ -98,7 +98,7 @@ module.exports.signupMetamask_post = async (req, res) => {
       return res.status(201).json({ user: checkUser, jwt: token });
     }
 
-    const newUser = { ...INIT_USER, name: req.body.wallet, email: req.body.wallet+'@learntoearn.work', password: req.body.wallet, wallet: req.body.wallet };
+    const newUser = { ...INIT_USER, name: req.body.wallet, email: req.body.wallet+'@zklearn.io', password: req.body.wallet, wallet: req.body.wallet };
 
     if(req.body.referral) {
       const refUser = await User.findOne({referralUrl: req.body.referral});

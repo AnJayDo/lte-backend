@@ -1,3 +1,56 @@
+module.exports.ZKQuestionList = [
+    {
+        title: 'Is there an activation fee for your zksync account?',
+        answers: ['Yes', 'No'],
+        correct: 0
+    },
+    {
+        title: 'Is zksync era layer 1 or layer 2 protocol?',
+        answers: ['Layer 1', 'Layer 2'],
+        correct: 1
+    },
+    {
+        title: 'Does zkSync have a Token?',
+        answers: ['Yes', 'No'],
+        correct: 1
+    },
+    {
+        title: 'When zkSync launched its Fair Onboarding Alpha?',
+        answers: ['16th February 2023', '20th February 2023', '26th February 2023', '2nd March 2023'],
+        correct: 0
+    },
+    {
+        title: 'When zkSync Era Mainnet Alpha became open to public?',
+        answers: ['24th March 2023', '25th March 2023', '27th March 2023', '30th March 2023'],
+        correct: 0
+    },
+    {
+        title: 'Is zksync based on EVM (Ethereum based)?',
+        answers: ['Yes', 'No'],
+        correct: 0
+    },
+    {
+        title: 'When was the zkSync Era Testnet has been live?',
+        answers: ['February 2023', 'February 2022', 'March 2023', 'January 2023'],
+        correct: 1
+    },
+    {
+        title: 'List major difference(s) between zkSync Era and optimistic rollups.',
+        answers: ['Higher capital efficiency', 'Significantly higher security', 'UX for NFTs', 'Transaction costs', 'All correct'],
+        correct: 4
+    },
+    {
+        title: 'Does zkSync support Solidity smart contracts?',
+        answers: ['Yes', 'No'],
+        correct: 0
+    },
+    {
+        title: 'What wallets are supported to use zksync?',
+        answers: ['MetaMask', 'Hardware wallets', 'All wallets are supported'],
+        correct: 0
+    },
+]
+
 module.exports.QuestionList = `1/ This person invented Bitcoin.2
 Shamoshi Takadomo
 Maz Kanata
@@ -7,7 +60,7 @@ Motorola Huawei
 2/ What is the name of the first cryptocurrency ever made in 2009?3
 Litecoin
 Darkcoin
-Rimbit
+Rimbi    t
 Bitcoin
 
 3/ What is the name of the general ledger that tracks all bitcoin transactions?0
