@@ -351,7 +351,7 @@ const withdrawStake_put = async (req, res) => {
         null
       );
       if (user.referral) {
-        transactionUtil.generateReferral(user, stake.amount);
+        transactionUtil.generateReferral(user, stake.initAmount - stake.amount);
       }
       return res.status(201).json({ status: true, user, stake: result });
     }

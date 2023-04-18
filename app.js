@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const Ddos = require('ddos')
+const ddos = new Ddos({burst:10, limit:15})
 
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -28,10 +30,11 @@ const corsOptions = {
 }
 
 app.use(cors());
+app.use(ddos.express);
 
 // middleware
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 app.use(express.static('public'));
