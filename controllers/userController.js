@@ -372,7 +372,11 @@ const updateUserWithIdByToken_put = async (req, res) => {
     if (!user)
       return res.status(422).json({ message: 'User does not exists...!' });
 
-    const result = await User.findByIdAndUpdate(id, req.body, { new: true });
+    const result = await User.findByIdAndUpdate(id, {
+      avatar: req.body.avatar,
+      email: req.body.email,
+      name: req.body.name,
+    }, { new: true });
     if (!result)
       return res
         .status(422)
