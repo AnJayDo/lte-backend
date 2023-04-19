@@ -380,7 +380,10 @@ const updateUserWithIdByToken_put = async (req, res) => {
 
     res.status(201).json({ status: true, user: result });
   } catch (error) {
-    res.status(500).json({ message: 'Cannot get user.' });
+    if(error.codeName === 'DuplicateKey') {
+      return res.status(400).json({ error: 'Duplicated Email', message: 'Your email was duplicated. Please try another email.', status: 400});
+    }
+    res.status(500).json({ message: 'Cannot get user.'});
   }
 };
 
