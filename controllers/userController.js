@@ -378,7 +378,7 @@ const updateUserWithIdByToken_put = async (req, res) => {
         .status(422)
         .json({ message: 'Cannot update the exist user...!' });
 
-    res.status(201).json({ status: true, user: result });
+    res.status(201).json({ status: 'success', user: result });
   } catch (error) {
     if(error.codeName === 'DuplicateKey') {
       return res.status(400).json({ error: 'Duplicated Email', message: 'Your email was duplicated. Please try another email.', status: 400});
